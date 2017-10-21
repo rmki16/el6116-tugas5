@@ -1,5 +1,10 @@
 <?php
   include("config.php");
+  session_start();
+
+  if(isset($_SESSION['login_user'])){
+     header("location:welcome.php");
+  }
 
   if($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -9,15 +14,24 @@
     $pass_plain = mysqli_real_escape_string($mysqli,$_POST['password']);
     $pass_hash  = md5($pass_plain);
 
-    $sql = "INSERT INTO users (username, firstname, lastname, pass_plain, pass_hash) VALUES ('$username', '$firstname', '$lastname', '$pass_plain', '$pass_hash')";
+    $sql_check_activity = mysqli_query($mysqli, "SELECT * FROM users WHERE username = '$username'");
 
-    $result = mysqli_query($mysqli,$sql);
+    if(mysqli_fetch_row($sql_check_activity)) {
+      echo 'Username is already exist!';
+    } else {
+      $sql = "INSERT INTO users (username, firstname, lastname, pass_plain, pass_hash) VALUES ('$username', '$firstname', '$lastname', '$pass_plain', '$pass_hash')";
 
-    // check if the query is failing and returning false
-    if (!$result) {
-      printf("Error: %s\n", mysqli_error($mysqli));
-      exit();
+      $result = mysqli_query($mysqli,$sql);
+
+      // check if the query is failing and returning false
+      if (!$result) {
+        printf("Error: %s\n", mysqli_error($mysqli));
+        exit();
+      }
+
+      echo "Hi $firstname! Username $username has been registered successfully!";
     }
+
   }
 ?>
 
@@ -58,8 +72,10 @@
                   <label>FirstName  :</label><input type = "text" name = "firstname" class = "box"/><br /><br />
                   <label>LastName  :</label><input type = "text" name = "lastname" class = "box"/><br /><br />
                   <label>Password  :</label><input type = "password" name = "password" class = "box" /><br/><br />
-                  <input type = "submit" value = " Submit "/><br />
+                  <input type = "submit" value = " Submit "/>
+                  <input type = "button" name="cancel" value="Cancel" onClick="window.location='welcome.php';" />
                </form>
+
 
                <div style = "font-size:11px; color:#cc0000; margin-top:10px">
 
