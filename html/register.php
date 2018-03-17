@@ -17,7 +17,7 @@
     $sql_check_activity = mysqli_query($mysqli, "SELECT * FROM users WHERE username = '$username'");
 
     if(mysqli_fetch_row($sql_check_activity)) {
-      echo 'Username is already exist!';
+      echo '<span style="color:	#ff0000;text-align:center;">Username is already exist!</span>';
     } else {
       $sql = "INSERT INTO users (username, firstname, lastname, pass_plain, pass_hash) VALUES ('$username', '$firstname', '$lastname', '$pass_plain', '$pass_hash')";
 
